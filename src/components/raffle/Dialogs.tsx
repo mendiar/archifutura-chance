@@ -65,7 +65,7 @@ export function ReserveDialog({
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [acepto, setAcepto] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<"nombre"|"telefono"|"acepto"|"form", string>>>({});
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -74,7 +74,7 @@ export function ReserveDialog({
     if (isClosed()) { setErrors({ form: "El cierre definitivo ya pasó. No se aceptan nuevas reservas." }); return; }
     const parsed = reserveSchema.safeParse({ nombre, telefono, acepto });
     if (!parsed.success) {
-      setErrors(Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), i.message])));
+      setErrors(Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), i.message])) as Record<string, string>);
       return;
     }
     setErrors({});
@@ -127,13 +127,13 @@ export function ReserveDialog({
         <form onSubmit={submit} className="space-y-4" noValidate>
           <div className="space-y-1.5">
             <Label htmlFor="r-nombre">Nombre o alias</Label>
-            <Input id="r-nombre" value={nombre} maxLength={60} onChange={(e) => setNombre(e.target.value)} aria-invalid={!!errors.nombre} aria-describedby="r-nombre-err" />
-            {errors.nombre && <p id="r-nombre-err" className="text-sm text-destructive">{errors.nombre}</p>}
+            <Input id="r-nombre" value={nombre} maxLength={60} onChange={(e) => setNombre(e.target.value)} aria-invalid={!!errors["nombre"]} aria-describedby="r-nombre-err" />
+            {errors["nombre"] && <p id="r-nombre-err" className="text-sm text-destructive">{errors["nombre"]}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="r-tel">WhatsApp de contacto</Label>
-            <Input id="r-tel" inputMode="tel" value={telefono} maxLength={20} onChange={(e) => setTelefono(e.target.value)} aria-invalid={!!errors.telefono} aria-describedby="r-tel-err" />
-            {errors.telefono && <p id="r-tel-err" className="text-sm text-destructive">{errors.telefono}</p>}
+            <Input id="r-tel" inputMode="tel" value={telefono} maxLength={20} onChange={(e) => setTelefono(e.target.value)} aria-invalid={!!errors["telefono"]} aria-describedby="r-tel-err" />
+            {errors["telefono"] && <p id="r-tel-err" className="text-sm text-destructive">{errors["telefono"]}</p>}
           </div>
           <div className="flex items-start gap-3">
             <Checkbox id="r-ok" checked={acepto} onCheckedChange={(v) => setAcepto(v === true)} className="mt-0.5" />
@@ -141,12 +141,12 @@ export function ReserveDialog({
               Entiendo que la reserva no participa en el sorteo hasta que el organizador verifique el pago completo.
             </Label>
           </div>
-          {errors.acepto && <p className="text-sm text-destructive">{errors.acepto}</p>}
+          {errors["acepto"] && <p className="text-sm text-destructive">{errors["acepto"]}</p>}
           <PaymentBlock amountLabel={cop(CONFIG.TICKET_PRICE)} />
           <p className="text-sm text-muted-foreground">
             Realiza la transferencia manualmente y luego pulsa el botón. Se abrirá WhatsApp para que adjuntes el comprobante.
           </p>
-          {errors.form && <p role="alert" className="text-sm text-destructive">{errors.form}</p>}
+          {errors["form"] && <p role="alert" className="text-sm text-destructive">{errors["form"]}</p>}
           <Button type="submit" size="lg" className="w-full" disabled={busy}>
             {busy ? "Enviando…" : "Registrar reserva y abrir WhatsApp"}
           </Button>
@@ -172,7 +172,7 @@ export function AlertDialog({ numero, onClose }: { numero: number | null; onClos
     e.preventDefault();
     if (numero === null) return;
     const p = emailSchema.safeParse(email);
-    if (!p.success) { setErr(p.error.issues[0].message); return; }
+    if (!p.success) { setErr(p.error.issues[0]?.message ?? "Dato inválido."); return; }
     setErr("");
     if (!CONFIG.SCRIPT_SUPPORTS_EXTENDED) {
       window.location.href = mailLink(CONFIG.ORGANIZER_EMAIL, `Avisarme si se libera el número ${pad(numero)}`,
@@ -242,7 +242,7 @@ export function DonationDialog({ open, onClose }: { open: boolean; onClose: () =
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const p = donationSchema.safeParse({ nombre: nombre || undefined, valor: valor.replace(/\D/g, "") });
-    if (!p.success) { setErr(p.error.issues[0].message); return; }
+    if (!p.success) { setErr(p.error.issues[0]?.message ?? "Dato inválido."); return; }
     setErr("");
     if (CONFIG.SCRIPT_SUPPORTS_EXTENDED) {
       void postToScript({ tipo: "APORTE_VOLUNTARIO", nombre: p.data.nombre ?? "Anónimo", contacto: contacto.slice(0, 80), valorDeclarado: p.data.valor, fecha: new Date().toISOString(), estado: "DECLARADO" });
