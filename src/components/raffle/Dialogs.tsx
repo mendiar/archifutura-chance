@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { z } from "zod";
-import { Copy, ExternalLink, ShieldAlert } from "lucide-react";
+import { Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import qr from "@/assets/qr-breb.jpg.asset.json";
 import { CONFIG } from "@/config";
@@ -286,4 +286,4 @@ export function DonationDialog({ open, onClose }: { open: boolean; onClose: () =
   );
 }
 
-export { ShieldAlert };
+
