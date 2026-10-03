@@ -30,7 +30,7 @@ export async function fetchNumbers(): Promise<RaffleNumber[]> {
   return Array.from({ length: 100 }, (_, n) => ({ numero: n, state: map.get(n) ?? "DISPONIBLE" }));
 }
 
-export type PostResult = { kind: "SUCCESS" } | { kind: "TAKEN" } | { kind: "ERROR"; message?: string } | { kind: "UNCONFIRMED" };
+export type PostResult = { kind: "SUCCESS" } | { kind: "TAKEN" } | { kind: "ERROR"; message?: string | undefined } | { kind: "UNCONFIRMED" };
 
 /** text/plain evita el preflight CORS; Apps Script lee e.postData.contents. */
 export async function postToScript(payload: Record<string, unknown>): Promise<PostResult> {
