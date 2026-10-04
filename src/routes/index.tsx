@@ -11,6 +11,7 @@ import {
   AlertDialog,
   DonationDialog,
   PaidDialog,
+  PaymentBlock,
   ReserveDialog,
   reserveToast,
 } from "@/components/raffle/Dialogs";
@@ -195,6 +196,17 @@ function Index() {
           className={q.isLoading || q.isError ? "pointer-events-none opacity-40" : ""}
         >
           <NumberGrid numbers={numbers} onPick={pick} />
+        </div>
+      </Section>
+
+      <Section title="Cómo participar" id="pago">
+        <div className="ceremonial p-6">
+          <p className="mb-4 text-center text-sm text-muted-foreground">
+            Cuando el tablero confirme que un número está disponible, puedes reservarlo y realizar
+            la transferencia manual. El número solo participa después de que el pago completo sea
+            verificado.
+          </p>
+          <PaymentBlock amountLabel={cop(CONFIG.TICKET_PRICE)} />
         </div>
       </Section>
 
