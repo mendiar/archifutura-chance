@@ -5,7 +5,7 @@ const env = import.meta.env;
 export const CONFIG = {
   SCRIPT_URL:
     env["VITE_SCRIPT_URL"] ??
-    "https://script.google.com/macros/s/AKfycbyD_5FFlvB5hUj4nDF4VbxgidCafE6LIdVTvymnagjXtTfTb_keXUV-35vE4GN6jDk5CA/exec",
+    "https://script.google.com/macros/s/AKfycbwK37WKuV0s87hqEW8fPdQEpUf45yszWnAJjvkuWn6H6HCf9I0jgKhED2onAnM0B7kfrQ/exec",
   // true solo cuando el Apps Script propuesto (docs/apps-script-propuesto.gs)
   // esté desplegado: habilita ALERTA_DISPONIBILIDAD, APORTE_VOLUNTARIO y CONSULTA_SERVICIO.
   SCRIPT_SUPPORTS_EXTENDED: (env["VITE_SCRIPT_SUPPORTS_EXTENDED"] ?? "false") === "true",
@@ -24,9 +24,10 @@ export const CONFIG = {
   FINAL_CUTOFF: "2026-10-13T23:59:00-05:00",
   FINAL_CUTOFF_LABEL: "martes 13 de octubre de 2026 a las 11:59 p. m.",
   TIMEZONE: "America/Bogota",
-  TICKET_PRICE: 10_000,
-  PRIZE: 200_000,
-  MIN_ACTIVATION_AMOUNT: 730_000,
+  TICKET_PRICE: 20_000,
+  PRIZE: 500_000,
+  MIN_ACTIVATION_NUMBERS: 52,
+  MIN_ACTIVATION_AMOUNT: 1_040_000,
   RESERVATION_HOURS: 3,
   TOTAL_NUMBERS: 100,
 } as const;

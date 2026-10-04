@@ -29,7 +29,7 @@
 var MAIN_SHEET = "Hoja 1"; // ← cambia al nombre real de tu pestaña principal
 var CUTOFF = new Date("2026-10-13T23:59:00-05:00");
 var RESERVA_MS = 3 * 60 * 60 * 1000;
-var PRECIO = 10000;
+var PRECIO = 20000;
 var NOTIFY_EMAIL = "mendiar88@gmail.com";
 
 var MAIN_HEADERS = ["NUMERO", "ESTADO", "NOMBRE", "TELEFONO", "VALOR", "FECHA_RESERVA",

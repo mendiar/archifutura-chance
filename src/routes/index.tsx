@@ -137,7 +137,10 @@ function Index() {
         <div className="ceremonial grid grid-cols-2 gap-4 p-5 md:grid-cols-4">
           <Stat label="Pagos verificados" value={q.data ? `${paid}/100` : "—"} />
           <Stat label="Recaudado por números" value={q.data ? cop(raised) : "—"} />
-          <Stat label="Mínimo de activación" value={cop(CONFIG.MIN_ACTIVATION_AMOUNT)} />
+          <Stat
+            label="Mínimo de activación"
+            value={`${CONFIG.MIN_ACTIVATION_NUMBERS} números · ${cop(CONFIG.MIN_ACTIVATION_AMOUNT)}`}
+          />
           <Stat label="Estado" value={q.data ? status : "Sin datos"} />
           <div className="col-span-2 md:col-span-4">
             <Progress
@@ -241,8 +244,9 @@ function Index() {
             únicamente como referencia pública previamente anunciada.
           </li>
           <li>
-            Activación mínima: la rifa solo se activa si los pagos totalmente verificados suman al
-            menos {cop(CONFIG.MIN_ACTIVATION_AMOUNT)}. Saldo mínimo esperado después del premio:{" "}
+            Activación mínima: la rifa solo se activa si se venden y pagan completamente al menos{" "}
+            {CONFIG.MIN_ACTIVATION_NUMBERS} números, equivalentes a{" "}
+            {cop(CONFIG.MIN_ACTIVATION_AMOUNT)}. Saldo mínimo esperado después del premio:{" "}
             {cop(CONFIG.MIN_ACTIVATION_AMOUNT - CONFIG.PRIZE)}.
           </li>
           <li>

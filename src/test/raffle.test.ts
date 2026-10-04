@@ -11,16 +11,16 @@ describe("reglas de la rifa", () => {
     expect(mapState("PAGADO_VERIFICADO")).toBe("PAGADO_VERIFICADO");
   });
 
-  it("exige 73 pagos verificados para activar la rifa", () => {
-    expect(raffleStatus(72, new Date("2026-10-10T12:00:00-05:00"))).toBe("Pendiente de activación");
-    expect(raffleStatus(73, new Date("2026-10-10T12:00:00-05:00"))).toBe("Activada");
+  it("exige 52 pagos verificados para activar la rifa", () => {
+    expect(raffleStatus(51, new Date("2026-10-10T12:00:00-05:00"))).toBe("Pendiente de activación");
+    expect(raffleStatus(52, new Date("2026-10-10T12:00:00-05:00"))).toBe("Activada");
   });
 
   it("cierra y marca como no activada cuando no se alcanza el mínimo", () => {
     const afterCutoff = new Date("2026-10-14T00:00:00-05:00");
     expect(isClosed(afterCutoff)).toBe(true);
-    expect(raffleStatus(72, afterCutoff)).toBe("No activada");
-    expect(raffleStatus(73, afterCutoff)).toBe("Cerrada");
+    expect(raffleStatus(51, afterCutoff)).toBe("No activada");
+    expect(raffleStatus(52, afterCutoff)).toBe("Cerrada");
   });
 
   it("limita la reserva al cierre definitivo", () => {
