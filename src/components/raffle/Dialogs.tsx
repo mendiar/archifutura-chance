@@ -95,11 +95,13 @@ const UNCONFIRMED =
   "Solicitud enviada. La reserva queda pendiente de verificación. Si no ves confirmación o tienes dudas, escríbenos por WhatsApp o correo.";
 
 export function ReserveDialog({
-  numero,
+  numeros,
+  open,
   onClose,
   onDone,
 }: {
-  numero: number | null;
+  numeros: number[];
+  open: boolean;
   onClose: () => void;
   onDone: (r: PostResult, n: number, exp: Date) => void;
 }) {
@@ -113,7 +115,7 @@ export function ReserveDialog({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (numero === null) return;
+    if (numeros.length === 0) return;
     if (isClosed()) {
       setErrors({ form: "El cierre definitivo ya pasó. No se aceptan nuevas reservas." });
       return;
@@ -128,60 +130,73 @@ export function ReserveDialog({
       return;
     }
     setErrors({});
-    // Abrir la pestaña ya (antes del await) para que el navegador no la bloquee.
     const win = window.open("about:blank", "_blank");
     setBusy(true);
     const now = new Date();
     const exp = reservationExpiry(now);
-    const result = await postToScript({
-      tipo: "RESERVA",
-      numero, // entero: 7, nunca "07"
-      nombre: parsed.data.nombre,
-      telefono: parsed.data.telefono,
-      valor: CONFIG.TICKET_PRICE,
-      fechaReserva: now.toISOString(),
-      fechaVencimiento: exp.toISOString(),
-      estado: "RESERVADO",
-    });
-    setBusy(false);
-    if (result.kind === "TAKEN") {
-      win?.close();
-      setErrors({
-        form: `El número ${pad(numero)} acaba de ser reservado por otra persona. Elige otro.`,
+    const results: PostResult[] = [];
+    for (const numero of numeros) {
+      const result = await postToScript({
+        tipo: "RESERVA",
+        numero,
+        nombre: parsed.data.nombre,
+        telefono: parsed.data.telefono,
+        valor: CONFIG.TICKET_PRICE,
+        fechaReserva: now.toISOString(),
+        fechaVencimiento: exp.toISOString(),
+        estado: "RESERVADO",
       });
+      results.push(result);
       onDone(result, numero, exp);
-      return;
+      if (result.kind === "ERROR" || result.kind === "UNCONFIRMED") break;
     }
-    if (result.kind === "ERROR") {
+    setBusy(false);
+
+    const taken = numeros.filter((_, i) => results[i]?.kind === "TAKEN");
+    const failed = results.some((r) => r.kind === "ERROR" || r.kind === "UNCONFIRMED");
+    const confirmed = numeros.filter((_, i) => results[i]?.kind === "SUCCESS");
+    if (failed) {
       win?.close();
       setErrors({
-        form: `No pudimos registrar la reserva${result.message ? ` (${result.message})` : ""}. Escríbenos por WhatsApp.`,
+        form: `Se procesaron parcialmente tus números. ${taken.length ? `No disponibles: ${taken.map(pad).join(", ")}. ` : ""}Verifica el resultado por WhatsApp o correo.`,
       });
       return;
     }
+    if (confirmed.length === 0) {
+      win?.close();
+      setErrors({
+        form: `Los números ${taken.map(pad).join(", ")} ya fueron reservados. Elige otros.`,
+      });
+      return;
+    }
+
     const msg =
-      `Hola. Registré una reserva del número ${pad(numero)} en "El Destino y la Voluntad".\n` +
-      `Nombre o alias: ${parsed.data.nombre}\nValor: ${cop(CONFIG.TICKET_PRICE)}\n` +
-      `Adjunto el comprobante de transferencia Bre-B. Entiendo que el número participa solo cuando el pago sea verificado.`;
+      `Hola. Registré una reserva de los números ${confirmed.map(pad).join(", ")} en "El Destino y la Voluntad".\n` +
+      `Nombre o alias: ${parsed.data.nombre}\n` +
+      `Total: ${cop(confirmed.length * CONFIG.TICKET_PRICE)}\n` +
+      `Adjunto el comprobante de transferencia Bre-B. Entiendo que los números participan solo cuando el pago sea verificado.`;
     const url = waLink(CONFIG.ORGANIZER_WHATSAPP, msg);
     if (win) win.location.href = url;
     else window.location.href = url;
-    onDone(result, numero, exp);
+    if (taken.length)
+      setErrors({ form: `Reserva parcial. No disponibles: ${taken.map(pad).join(", ")}.` });
     setNombre("");
     setTelefono("");
     setAcepto(false);
   };
 
+  const total = numeros.length * CONFIG.TICKET_PRICE;
   return (
-    <Dialog open={numero !== null} onOpenChange={(o) => !o && onClose()}>
+    <Dialog open={open && numeros.length > 0} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className={content}>
         <DialogHeader>
           <DialogTitle className="font-serif text-2xl text-gold">
-            Reservar el número {numero !== null && pad(numero)}
+            Reservar {numeros.length} número{numeros.length === 1 ? "" : "s"}
           </DialogTitle>
           <DialogDescription>
-            Valor: {cop(CONFIG.TICKET_PRICE)}. La reserva dura máximo {CONFIG.RESERVATION_HOURS}{" "}
-            horas y no es una participación hasta que el pago sea verificado.
+            Seleccionados: {numeros.map(pad).join(", ")} · Total: {cop(total)}. La reserva dura
+            máximo {CONFIG.RESERVATION_HOURS} horas y no es una participación hasta que el pago sea
+            verificado.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4" noValidate>
@@ -226,15 +241,15 @@ export function ReserveDialog({
               className="mt-0.5"
             />
             <Label htmlFor="r-ok" className="font-normal leading-snug">
-              Entiendo que la reserva no participa en el sorteo hasta que el organizador verifique
-              el pago completo.
+              Entiendo que las reservas no participan en el sorteo hasta que el organizador
+              verifique el pago completo.
             </Label>
           </div>
           {errors["acepto"] && <p className="text-sm text-destructive">{errors["acepto"]}</p>}
-          <PaymentBlock amountLabel={cop(CONFIG.TICKET_PRICE)} />
+          <PaymentBlock amountLabel={cop(total)} />
           <p className="text-sm text-muted-foreground">
-            Realiza la transferencia manualmente y luego pulsa el botón. Se abrirá WhatsApp para que
-            adjuntes el comprobante.
+            Realiza una sola transferencia por el total y luego pulsa el botón. Se abrirá WhatsApp
+            para que adjuntes el comprobante.
           </p>
           {errors["form"] && (
             <p role="alert" className="text-sm text-destructive">
@@ -242,7 +257,7 @@ export function ReserveDialog({
             </p>
           )}
           <Button type="submit" size="lg" className="w-full" disabled={busy}>
-            {busy ? "Enviando…" : "Registrar reserva y abrir WhatsApp"}
+            {busy ? "Enviando reservas…" : "Registrar reservas y abrir WhatsApp"}
           </Button>
         </form>
       </DialogContent>

@@ -29,9 +29,11 @@ export function Legend() {
 export function NumberGrid({
   numbers,
   onPick,
+  selected = [],
 }: {
   numbers: RaffleNumber[];
   onPick: (n: RaffleNumber) => void;
+  selected?: number[];
 }) {
   return (
     <div
@@ -46,9 +48,12 @@ export function NumberGrid({
           type="button"
           onClick={() => onPick(n)}
           aria-label={`Número ${pad(n.numero)}: ${LABEL[n.state]}`}
+          aria-pressed={selected.includes(n.numero)}
           className={cn(
             "flex h-12 items-center justify-center border font-serif text-lg font-bold transition-colors focus-visible:outline-2 focus-visible:outline-ring",
             STYLE[n.state],
+            selected.includes(n.numero) &&
+              "border-2 border-gold bg-gold/20 text-gold ring-2 ring-gold/40",
           )}
         >
           {pad(n.numero)}

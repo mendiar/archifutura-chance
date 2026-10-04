@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Mail, MessageCircle, RefreshCw, ShieldAlert } from "lucide-react";
+import { Mail, MessageCircle, RefreshCw, ShieldAlert, X } from "lucide-react";
 import { CONFIG } from "@/config";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -76,7 +76,8 @@ function Index() {
     return () => clearInterval(t);
   }, []);
 
-  const [reserve, setReserve] = useState<number | null>(null);
+  const [reserve, setReserve] = useState<number[]>([]);
+  const [reserveOpen, setReserveOpen] = useState(false);
   const [alertN, setAlertN] = useState<number | null>(null);
   const [paidN, setPaidN] = useState<number | null>(null);
   const [donate, setDonate] = useState(false);
@@ -93,7 +94,11 @@ function Index() {
     if (n.state === "PAGADO_VERIFICADO") return setPaidN(n.numero);
     if (n.state === "RESERVADO") return setAlertN(n.numero);
     if (closed) return;
-    setReserve(n.numero);
+    setReserve((current) =>
+      current.includes(n.numero)
+        ? current.filter((value) => value !== n.numero)
+        : [...current, n.numero].sort((a, b) => a - b),
+    );
   };
 
   return (
@@ -198,8 +203,30 @@ function Index() {
           aria-busy={q.isLoading}
           className={q.isLoading || q.isError ? "pointer-events-none opacity-40" : ""}
         >
-          <NumberGrid numbers={numbers} onPick={pick} />
+          <NumberGrid numbers={numbers} onPick={pick} selected={reserve} />
         </div>
+        {reserve.length > 0 && (
+          <div className="sticky bottom-4 z-10 mt-5 flex flex-wrap items-center justify-between gap-3 border border-gold/50 bg-background/95 p-4 shadow-lg backdrop-blur">
+            <div>
+              <p className="font-semibold text-gold">
+                {reserve.length} número{reserve.length === 1 ? "" : "s"} seleccionado
+                {reserve.length === 1 ? "" : "s"}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {reserve.map((n) => String(n).padStart(2, "0")).join(", ")} · Total:{" "}
+                {cop(reserve.length * CONFIG.TICKET_PRICE)}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button type="button" variant="ghost" onClick={() => setReserve([])}>
+                <X className="mr-1 h-4 w-4" /> Limpiar
+              </Button>
+              <Button type="button" onClick={() => setReserveOpen(true)}>
+                Continuar con la selección
+              </Button>
+            </div>
+          </div>
+        )}
       </Section>
 
       <Section title="Cómo participar" id="pago">
@@ -391,12 +418,15 @@ function Index() {
       </footer>
 
       <ReserveDialog
-        numero={reserve}
-        onClose={() => setReserve(null)}
+        numeros={reserve}
+        open={reserveOpen}
+        onClose={() => setReserveOpen(false)}
         onDone={(r, n, exp) => {
-          setReserve(null);
           reserveToast(r, n, exp);
           void q.refetch();
+          if (r.kind === "SUCCESS" || r.kind === "TAKEN") {
+            setReserve((current) => current.filter((value) => value !== n));
+          }
         }}
       />
       <AlertDialog numero={alertN} onClose={() => setAlertN(null)} />
