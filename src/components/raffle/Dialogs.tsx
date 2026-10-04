@@ -34,7 +34,7 @@ export function PaymentBlock({ amountLabel }: { amountLabel?: string }) {
     <div className="ceremonial space-y-3 p-4">
       <div className="flex gap-4">
         <img
-          src={qr.url}
+          src={qr}
           alt="Código QR Bre-B de BBVA para transferir"
           className="h-32 w-32 shrink-0 bg-foreground object-cover object-[50%_45%]"
         />
