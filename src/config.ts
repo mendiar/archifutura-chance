@@ -5,7 +5,7 @@ const env = import.meta.env;
 export const CONFIG = {
   SCRIPT_URL:
     env["VITE_SCRIPT_URL"] ??
-    "https://script.google.com/macros/s/AKfycbzou3yXd5scVcRrgXL5_O_3xdTks4iUU8SSiax9I2NNHP_hL9Z00XZCMidfT5nSdmR_/exec",
+    "https://script.google.com/macros/s/AKfycbyD_5FFlvB5hUj4nDF4VbxgidCafE6LIdVTvymnagjXtTfTb_keXUV-35vE4GN6jDk5CA/exec",
   // true solo cuando el Apps Script propuesto (docs/apps-script-propuesto.gs)
   // esté desplegado: habilita ALERTA_DISPONIBILIDAD, APORTE_VOLUNTARIO y CONSULTA_SERVICIO.
   SCRIPT_SUPPORTS_EXTENDED: (env["VITE_SCRIPT_SUPPORTS_EXTENDED"] ?? "false") === "true",
