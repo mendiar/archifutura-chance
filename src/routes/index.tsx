@@ -1,7 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Mail, MessageCircle, Dices, HandHeart, RefreshCw, ShieldAlert, X } from "lucide-react";
+import {
+  BadgeCheck,
+  Dices,
+  HandHeart,
+  Mail,
+  MessageCircle,
+  RefreshCw,
+  ShieldAlert,
+  TicketCheck,
+  X,
+} from "lucide-react";
 import { CONFIG } from "@/config";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -322,6 +332,44 @@ function Index() {
           </p>
           <PaymentBlock amountLabel={cop(CONFIG.TICKET_PRICE)} />
         </div>
+      </Section>
+
+      <Section title="La ruta de la confianza" id="confianza">
+        <div className="grid gap-4 md:grid-cols-3" aria-label="Proceso de participación">
+          {[
+            {
+              icon: TicketCheck,
+              step: "01",
+              title: "Elija",
+              text: "Seleccione uno o varios números disponibles y revise el total antes de reservar.",
+            },
+            {
+              icon: BadgeCheck,
+              step: "02",
+              title: "Verificamos",
+              text: "El organizador comprueba manualmente la transferencia completa. Una reserva todavía no participa.",
+            },
+            {
+              icon: ShieldAlert,
+              step: "03",
+              title: "Participa",
+              text: "Solo el estado PAGADO_VERIFICADO habilita el número para el sorteo de referencia.",
+            },
+          ].map(({ icon: Icon, step, title, text }) => (
+            <article key={step} className="ceremonial relative p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <Icon className="h-7 w-7 text-gold" aria-hidden="true" />
+                <span className="font-serif text-sm tracking-widest text-gold/70">{step}</span>
+              </div>
+              <h3 className="mb-2 font-serif text-lg font-semibold text-gold">{title}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{text}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-4 flex items-center justify-center gap-2 text-center text-xs text-muted-foreground">
+          <ShieldAlert className="h-4 w-4 text-gold" aria-hidden="true" />
+          Los nombres y teléfonos se usan para gestionar la reserva y no se publican en el tablero.
+        </p>
       </Section>
 
       <Section title="Regla esencial">
