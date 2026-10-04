@@ -2,7 +2,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import qr from "@/assets/qr-breb.jpg.asset.json";
+import qr from "@/assets/qr-breb.jpeg";
 import { CONFIG } from "@/config";
 import {
   Dialog,
