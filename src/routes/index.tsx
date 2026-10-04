@@ -157,9 +157,10 @@ function Index() {
           <span className="font-normal italic text-gold">La voluntad compartida responde.</span>
         </h1>
         <p className="mx-auto mb-4 max-w-2xl text-base font-light leading-relaxed text-muted-foreground md:text-lg">
-          Un robo violento afectó temporalmente nuestra capacidad para cubrir gastos esenciales del
-          hogar, especialmente arriendo y alimentación. Esta iniciativa, dirigida a personas
-          cercanas, busca atravesar la contingencia con transparencia y dignidad.
+          Un imprevisto de seguridad, lamentable e inesperado, afectó temporalmente nuestra
+          capacidad para cubrir gastos esenciales del hogar, especialmente arriendo y alimentación.
+          Esta iniciativa, dirigida a personas cercanas, busca atravesar la contingencia con
+          transparencia y dignidad.
         </p>
         <p className="mx-auto max-w-2xl font-serif text-sm text-gold/90">
           La suerte puede elegir un número. La confianza se construye de otra manera: con reglas
