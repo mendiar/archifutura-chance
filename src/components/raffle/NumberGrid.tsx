@@ -34,7 +34,11 @@ export function NumberGrid({
   onPick: (n: RaffleNumber) => void;
 }) {
   return (
-    <div className="grid grid-cols-5 gap-2 sm:grid-cols-10" role="list" aria-label="Números de la rifa del 00 al 99">
+    <div
+      className="grid grid-cols-5 gap-2 sm:grid-cols-10"
+      role="list"
+      aria-label="Números de la rifa del 00 al 99"
+    >
       {numbers.map((n) => (
         <button
           key={n.numero}

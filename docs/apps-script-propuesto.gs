@@ -67,6 +67,16 @@ function tab(name, headers) {
 
 function str(v, max) { return String(v == null ? "" : v).trim().slice(0, max); }
 
+function rowForNumber(sheet, number, numberColumn) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return -1;
+  var values = sheet.getRange(2, numberColumn, lastRow - 1, 1).getValues();
+  for (var i = 0; i < values.length; i++) {
+    if (Number(values[i][0]) === number) return i + 2;
+  }
+  return -1;
+}
+
 function liberarVencidas() {
   var sheet = mainSheet();
   var c = ensureHeaders(sheet, MAIN_HEADERS);
@@ -109,7 +119,8 @@ function avisarAlertas(numero) {
 function doGet(e) {
   liberarVencidas();
   var sheet = mainSheet();
-  var data = sheet.getRange("A2:B101").getValues(); // misma lectura que el original
+  var lastRow = Math.max(sheet.getLastRow(), 1);
+  var data = lastRow >= 2 ? sheet.getRange(2, 1, lastRow - 1, 2).getValues() : [];
   return json(data.map(function (row) { return { numero: row[0], estado: row[1] }; }));
 }
 
@@ -141,7 +152,8 @@ function reservar(c) {
   liberarVencidas();
   var sheet = mainSheet();
   var col = ensureHeaders(sheet, MAIN_HEADERS);
-  var rowIndex = numero + 2; // misma correspondencia fila/número que el original
+  var rowIndex = rowForNumber(sheet, numero, col.NUMERO);
+  if (rowIndex < 0) return json({ status: "ERROR", message: "Número no configurado" });
   var estadoActual = String(sheet.getRange(rowIndex, col.ESTADO).getValue()).toUpperCase();
   if (estadoActual !== "LIBRE" && estadoActual !== "LIBERADO" && estadoActual !== "") return json({ status: "TAKEN" });
 

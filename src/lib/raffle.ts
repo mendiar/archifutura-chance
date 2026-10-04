@@ -11,7 +11,9 @@ export const cop = (v: number) =>
 
 /** Mapea los estados de la hoja (actuales y propuestos) a los 3 estados visibles. */
 export function mapState(raw: unknown): NumberState {
-  const s = String(raw ?? "").trim().toUpperCase();
+  const s = String(raw ?? "")
+    .trim()
+    .toUpperCase();
   if (s === "PAGADO_VERIFICADO" || s === "PAGADO") return "PAGADO_VERIFICADO";
   if (s === "PENDIENTE" || s === "RESERVADO") return "RESERVADO";
   return "DISPONIBLE"; // LIBRE, LIBERADO, DISPONIBLE o vacío
@@ -30,7 +32,11 @@ export async function fetchNumbers(): Promise<RaffleNumber[]> {
   return Array.from({ length: 100 }, (_, n) => ({ numero: n, state: map.get(n) ?? "DISPONIBLE" }));
 }
 
-export type PostResult = { kind: "SUCCESS" } | { kind: "TAKEN" } | { kind: "ERROR"; message?: string | undefined } | { kind: "UNCONFIRMED" };
+export type PostResult =
+  | { kind: "SUCCESS" }
+  | { kind: "TAKEN" }
+  | { kind: "ERROR"; message?: string | undefined }
+  | { kind: "UNCONFIRMED" };
 
 /** text/plain evita el preflight CORS; Apps Script lee e.postData.contents. */
 export async function postToScript(payload: Record<string, unknown>): Promise<PostResult> {
@@ -62,7 +68,9 @@ export function reservationExpiry(now = new Date()) {
 
 export const bogota = (d: Date) =>
   new Intl.DateTimeFormat("es-CO", {
-    timeZone: CONFIG.TIMEZONE, dateStyle: "medium", timeStyle: "short",
+    timeZone: CONFIG.TIMEZONE,
+    dateStyle: "medium",
+    timeStyle: "short",
   }).format(d);
 
 export type RaffleStatus = "Pendiente de activación" | "Activada" | "Cerrada" | "No activada";
