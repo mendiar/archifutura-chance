@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Mail, MessageCircle, Dices, RefreshCw, ShieldAlert, X } from "lucide-react";
+import { Mail, MessageCircle, Dices, HandHeart, RefreshCw, ShieldAlert, X } from "lucide-react";
 import { CONFIG } from "@/config";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -159,8 +159,19 @@ function Index() {
           <Button asChild size="lg">
             <a href="#tombola">Tómbola solidaria</a>
           </Button>
-          <Button size="lg" variant="outline" onClick={() => setDonate(true)}>
-            Aportar sin entrar en el sorteo
+          <Button
+            size="lg"
+            onClick={() => setDonate(true)}
+            className="support-cta min-w-[16rem]"
+            aria-label="Aportar sin participar en la tómbola"
+          >
+            <HandHeart className="h-4 w-4" />
+            <span className="flex flex-col items-start leading-tight">
+              <span>Aportar sin participar</span>
+              <span className="text-[0.65rem] font-medium uppercase tracking-wider opacity-75">
+                Ayuda directa
+              </span>
+            </span>
           </Button>
           <Button asChild size="lg" variant="outline">
             <a href="#servicios">Servicios solidarios</a>

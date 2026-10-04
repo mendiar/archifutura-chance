@@ -56,6 +56,7 @@
   --color-available: var(--available);
   --color-reserved: var(--reserved);
   --color-paid: var(--paid);
+  --color-support-neon: var(--support-neon);
   --font-serif: "Cinzel", Georgia, serif;
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
   --color-sidebar: var(--sidebar);
@@ -94,7 +95,10 @@
   --available: oklch(0.72 0.15 155);
   --reserved: oklch(0.8 0.15 80);
   --paid: oklch(0.65 0.22 350);
-  --gradient-sky: radial-gradient(at 50% 0%, oklch(0.74 0.15 70 / 12%) 0, transparent 65%), radial-gradient(at 100% 100%, oklch(0.72 0.15 155 / 6%) 0, transparent 50%);
+  --support-neon: oklch(0.82 0.19 165);
+  --gradient-sky:
+    radial-gradient(at 50% 0%, oklch(0.74 0.15 70 / 12%) 0, transparent 65%),
+    radial-gradient(at 100% 100%, oklch(0.72 0.15 155 / 6%) 0, transparent 50%);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -111,13 +115,53 @@
 }
 
 @utility ceremonial {
-  background: linear-gradient(135deg, color-mix(in oklab, var(--card) 94%, transparent), color-mix(in oklab, var(--background) 96%, transparent));
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--card) 94%, transparent),
+    color-mix(in oklab, var(--background) 96%, transparent)
+  );
   border: 1px solid var(--border);
-  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
 }
 
 @utility gold-glow {
   text-shadow: 0 0 14px oklch(0.74 0.15 70 / 40%);
+}
+
+@utility support-cta {
+  background: var(--support-neon);
+  color: oklch(0.16 0.02 165);
+  border: 1px solid oklch(0.9 0.16 165 / 85%);
+  box-shadow:
+    0 0 0 1px oklch(0.82 0.19 165 / 18%),
+    0 0 20px oklch(0.82 0.19 165 / 24%);
+  font-weight: 700;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+@media (hover: hover) {
+  .support-cta:hover {
+    background: oklch(0.88 0.16 165);
+    box-shadow:
+      0 0 0 2px oklch(0.82 0.19 165 / 28%),
+      0 0 28px oklch(0.82 0.19 165 / 40%);
+    transform: translateY(-1px);
+  }
+}
+
+.support-cta:focus-visible {
+  outline: 2px solid var(--support-neon);
+  outline-offset: 3px;
 }
 
 @layer base {
