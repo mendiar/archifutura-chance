@@ -429,7 +429,7 @@ export function DonationDialog({ open, onClose }: { open: boolean; onClose: () =
     window.open(
       waLink(
         CONFIG.ORGANIZER_WHATSAPP,
-        `Hola. Hice un aporte voluntario de ${cop(p.data.valor)} (sin participar en la rifa). ${p.data.nombre ? `Nombre: ${p.data.nombre}. ` : ""}Adjunto el comprobante.`,
+        `Hola. Hice un aporte voluntario de ${cop(p.data.valor)} (sin participar en la tómbola). ${p.data.nombre ? `Nombre: ${p.data.nombre}. ` : ""}Adjunto el comprobante.`,
       ),
       "_blank",
       "noopener",
@@ -448,7 +448,7 @@ export function DonationDialog({ open, onClose }: { open: boolean; onClose: () =
           <DialogTitle className="font-serif text-2xl text-gold">Aporte voluntario</DialogTitle>
           <DialogDescription>
             Puedes aportar cualquier valor de forma voluntaria. Este aporte no compra un número, no
-            activa la rifa y no participa en el sorteo.
+            activa la tómbola y no participa en el sorteo.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3" noValidate>

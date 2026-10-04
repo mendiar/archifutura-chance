@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Mail, MessageCircle, RefreshCw, ShieldAlert, X } from "lucide-react";
+import { Mail, MessageCircle, Dices, RefreshCw, ShieldAlert, X } from "lucide-react";
 import { CONFIG } from "@/config";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -27,7 +27,7 @@ import {
 
 const TITLE = "El Destino y la Voluntad — Iniciativa solidaria";
 const DESC =
-  "Rifa solidaria con reglas claras, aportes voluntarios y servicios profesionales. Pagos manuales por Bre-B verificados por el organizador.";
+  "Tómbola solidaria con reglas claras, aportes voluntarios y servicios profesionales. Pagos manuales por Bre-B verificados por el organizador.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -78,6 +78,9 @@ function Index() {
 
   const [reserve, setReserve] = useState<number[]>([]);
   const [reserveOpen, setReserveOpen] = useState(false);
+  const [randomCount, setRandomCount] = useState("1");
+  const [spinning, setSpinning] = useState(false);
+  const [randomMessage, setRandomMessage] = useState("");
   const [alertN, setAlertN] = useState<number | null>(null);
   const [paidN, setPaidN] = useState<number | null>(null);
   const [donate, setDonate] = useState(false);
@@ -89,6 +92,34 @@ function Index() {
   const pct = Math.min(100, Math.round((raised / CONFIG.MIN_ACTIVATION_AMOUNT) * 100));
   const closed = now ? isClosed(now) : false;
   const status = raffleStatus(paid, now ?? new Date(0));
+
+  const chooseRandom = () => {
+    const requested = Math.max(1, Math.min(CONFIG.TOTAL_NUMBERS, Number(randomCount) || 1));
+    const pool = numbers.filter((n) => n.state === "DISPONIBLE" && !reserve.includes(n.numero));
+    if (pool.length === 0) {
+      setRandomMessage("No quedan números disponibles para elegir.");
+      return;
+    }
+    setSpinning(true);
+    setRandomMessage("");
+    window.setTimeout(() => {
+      const shuffled = [...pool];
+      for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const bytes = new Uint32Array(1);
+        crypto.getRandomValues(bytes);
+        const j = bytes[0] % (i + 1);
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      const chosen = shuffled.slice(0, Math.min(requested, shuffled.length)).map((n) => n.numero);
+      setReserve((current) => [...new Set([...current, ...chosen])].sort((a, b) => a - b));
+      setRandomMessage(
+        chosen.length < requested
+          ? `Solo quedaban ${chosen.length} número${chosen.length === 1 ? "" : "s"} disponible${chosen.length === 1 ? "" : "s"}.`
+          : `${chosen.length} número${chosen.length === 1 ? "" : "s"} elegido${chosen.length === 1 ? "" : "s"} por la ruleta.`,
+      );
+      setSpinning(false);
+    }, 750);
+  };
 
   const pick = (n: RaffleNumber) => {
     if (n.state === "PAGADO_VERIFICADO") return setPaidN(n.numero);
@@ -126,7 +157,7 @@ function Index() {
         </p>
         <nav className="mt-8 flex flex-wrap justify-center gap-3" aria-label="Modalidades">
           <Button asChild size="lg">
-            <a href="#rifa">Rifa solidaria</a>
+            <a href="#tombola">Tómbola solidaria</a>
           </Button>
           <Button size="lg" variant="outline" onClick={() => setDonate(true)}>
             Aportar sin entrar en el sorteo
@@ -138,7 +169,7 @@ function Index() {
       </header>
 
       {/* Panel financiero */}
-      <section className="mx-auto mt-10 max-w-4xl px-4" aria-label="Estado de la rifa">
+      <section className="mx-auto mt-10 max-w-4xl px-4" aria-label="Estado de la tómbola">
         <div className="ceremonial grid grid-cols-2 gap-4 p-5 md:grid-cols-4">
           <Stat label="Pagos verificados" value={q.data ? `${paid}/100` : "—"} />
           <Stat label="Recaudado por números" value={q.data ? cop(raised) : "—"} />
@@ -161,13 +192,55 @@ function Index() {
         </div>
       </section>
 
-      <Section id="rifa" title="Elige tu número">
+      <Section id="tombola" title="Elige tu número">
         <div className="mb-4 space-y-3 text-center text-sm text-muted-foreground">
           <p>
             {cop(CONFIG.TICKET_PRICE)} por número · Premio único {cop(CONFIG.PRIZE)} · Cierre:{" "}
             {CONFIG.FINAL_CUTOFF_LABEL} (hora de Colombia)
           </p>
           <Legend />
+        </div>
+        <div className="ceremonial mb-5 flex flex-col items-center gap-4 p-5 text-center sm:flex-row sm:justify-between sm:text-left">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/70 bg-gold/10 text-gold ${spinning ? "animate-spin" : ""}`}
+              aria-hidden
+            >
+              <Dices className="h-7 w-7" />
+            </div>
+            <div>
+              <p className="font-serif text-lg font-semibold text-gold">¿Indeciso?</p>
+              <p className="text-sm text-muted-foreground">
+                La ruleta puede elegir números libres por ti.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <label htmlFor="random-count" className="text-sm text-muted-foreground">
+              Cantidad
+            </label>
+            <input
+              id="random-count"
+              type="number"
+              min="1"
+              max={CONFIG.TOTAL_NUMBERS}
+              value={randomCount}
+              onChange={(e) => setRandomCount(e.target.value)}
+              className="h-10 w-20 border border-input bg-background px-3 text-center"
+              aria-label="Cantidad de números que elegirá la ruleta"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={chooseRandom}
+              disabled={spinning || closed}
+            >
+              <Dices className="mr-1 h-4 w-4" /> {spinning ? "Girando…" : "Elegir al azar"}
+            </Button>
+          </div>
+          {randomMessage && (
+            <p className="w-full text-sm text-gold sm:absolute sm:mt-24">{randomMessage}</p>
+          )}
         </div>
         {q.isError && (
           <div
@@ -180,7 +253,7 @@ function Index() {
               className="underline"
               href={waLink(
                 CONFIG.ORGANIZER_WHATSAPP,
-                "Hola. Quiero reservar un número de la rifa.",
+                "Hola. Quiero reservar un número de la tómbola.",
               )}
               target="_blank"
               rel="noopener noreferrer"
@@ -271,14 +344,14 @@ function Index() {
             únicamente como referencia pública previamente anunciada.
           </li>
           <li>
-            Activación mínima: la rifa solo se activa si se venden y pagan completamente al menos{" "}
+            Activación mínima: la tómbola solo se activa si se venden y pagan completamente al menos{" "}
             {CONFIG.MIN_ACTIVATION_NUMBERS} números, equivalentes a{" "}
             {cop(CONFIG.MIN_ACTIVATION_AMOUNT)}. Saldo mínimo esperado después del premio:{" "}
             {cop(CONFIG.MIN_ACTIVATION_AMOUNT - CONFIG.PRIZE)}.
           </li>
           <li>
-            Si al cierre no se alcanza el mínimo: la rifa no se activa, no se realiza el sorteo, no
-            se anuncia ganador y se coordina la devolución de los pagos verificados con cada
+            Si al cierre no se alcanza el mínimo: la tómbola no se activa, no se realiza el sorteo,
+            no se anuncia ganador y se coordina la devolución de los pagos verificados con cada
             participante. Los aportes voluntarios son independientes y no se convierten en pagos de
             números.
           </li>
@@ -306,7 +379,7 @@ function Index() {
         <div className="ceremonial p-6 text-center">
           <p className="mb-4 text-muted-foreground">
             Si prefieres apoyar sin participar, puedes hacer un aporte de cualquier valor. No compra
-            un número, no activa la rifa y no participa en el sorteo.
+            un número, no activa la tómbola y no participa en el sorteo.
           </p>
           <Button size="lg" onClick={() => setDonate(true)}>
             Aportar sin entrar en el sorteo
@@ -334,7 +407,7 @@ function Index() {
           <ul className="grid gap-2 text-sm sm:grid-cols-2">
             {[
               "No depende del azar.",
-              "No incluye números de la rifa.",
+              "No incluye números de la tómbola.",
               "No es una donación disfrazada.",
               "Intercambio directo: alcance, precio y plazo acordados.",
             ].map((t) => (

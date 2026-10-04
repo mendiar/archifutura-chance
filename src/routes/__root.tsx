@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "El Destino y la Voluntad" },
       {
         name: "description",
-        content: "Iniciativa solidaria privada: rifa, aportes voluntarios y servicios.",
+        content: "Iniciativa solidaria privada: tómbola, aportes voluntarios y servicios.",
       },
       { name: "author", content: "Diego Armando Méndez" },
       { property: "og:type", content: "website" },
