@@ -109,7 +109,7 @@ function liberarVencidas() {
       var row = i + 2;
       sheet.getRange(row, c.ESTADO).setValue("LIBRE");
       sheet.getRange(row, c.OBSERVACIONES).setValue("Reserva vencida " + now.toISOString());
-      [c.NOMBRE, c.TELEFONO, c.FECHA_RESERVA, c.FECHA_VENCIMIENTO].forEach(function (col) {
+      [c.NOMBRE, c.TELEFONO, c.VALOR, c.FECHA_RESERVA, c.FECHA_VENCIMIENTO].forEach(function (col) {
         sheet.getRange(row, col).clearContent();
       });
       avisarAlertas(Number(r[c.NUMERO - 1]));
@@ -194,6 +194,7 @@ function reservar(c) {
   sheet.getRange(rowIndex, col.ESTADO).setValue("PENDIENTE");
   sheet.getRange(rowIndex, col.NOMBRE).setValue(nombre);
   sheet.getRange(rowIndex, col.TELEFONO).setValue("'" + telefono);
+  // El precio es una regla del servidor; nunca se toma del navegador.
   sheet.getRange(rowIndex, col.VALOR).setValue(PRECIO);
   sheet.getRange(rowIndex, col.FECHA_RESERVA).setValue(now);
   sheet.getRange(rowIndex, col.FECHA_VENCIMIENTO).setValue(venc);
