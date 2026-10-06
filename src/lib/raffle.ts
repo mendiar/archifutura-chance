@@ -60,7 +60,7 @@ export async function postToScript(payload: Record<string, unknown>): Promise<Po
 export const cutoffDate = () => new Date(CONFIG.FINAL_CUTOFF);
 export const isClosed = (now = new Date()) => now >= cutoffDate();
 
-/** Vence a las 3 h o en el cierre definitivo, lo que ocurra primero. */
+/** Vence a las 12 h o en el cierre definitivo, lo que ocurra primero. */
 export function reservationExpiry(now = new Date()) {
   const exp = new Date(now.getTime() + CONFIG.RESERVATION_HOURS * 3600_000);
   return exp > cutoffDate() ? cutoffDate() : exp;

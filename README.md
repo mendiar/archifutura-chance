@@ -25,7 +25,7 @@ Pestañas: `ALERTAS (NUMERO, CORREO, FECHA_SOLICITUD, ESTADO, FECHA_AVISO)`, `AP
 
 ## Reglas
 
-00–99, $20.000 por número, premio $500.000, mínimo de activación de 52 números ($1.040.000, solo pagos verificados). Saldo mínimo esperado después del premio: $540.000. Sorteo: Lotería de Bogotá n.º 2868, 15/10/2026, dos últimas cifras del premio mayor. Cierre: 13/10/2026 11:59 p. m. America/Bogota. Reserva máx. 3 h. Si el número ganador no está pagado y verificado, no se entrega el premio.
+00–99, $20.000 por número, premio $500.000, mínimo de activación de 52 números ($1.040.000, solo pagos verificados). Saldo mínimo esperado después del premio: $540.000. Sorteo: Lotería de Bogotá n.º 2868, 15/10/2026, dos últimas cifras del premio mayor. Cierre: 15/10/2026 7:00 p. m. America/Bogota. Reserva máx. 12 h. Si el número ganador no está pagado y verificado, no se entrega el premio.
 
 ## CORS
 

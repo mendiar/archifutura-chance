@@ -14,7 +14,7 @@
  *  2. Validación de tipo y rango del número (0–99) y de longitudes.
  *  3. Columnas nuevas (sin borrar datos): VALOR, FECHA_RESERVA, FECHA_VENCIMIENTO,
  *     FECHA_PAGO_VERIFICADO, CORREO, OBSERVACIONES. Se crean si faltan.
- *  4. Vencimiento de reservas a las 3 h (o al cierre) → vuelve a LIBRE y avisa ALERTAS.
+ *  4. Vencimiento de reservas a las 12 h (o al cierre) → vuelve a LIBRE y avisa ALERTAS.
  *  5. Cierre definitivo: 15/10/2026 7:00 p. m. America/Bogota → rechaza reservas.
  *  6. Pestañas ALERTAS, APORTES y SERVICIOS para los tipos
  *     ALERTA_DISPONIBILIDAD, APORTE_VOLUNTARIO y CONSULTA_SERVICIO.
@@ -28,7 +28,7 @@
 
 var MAIN_SHEET = "Hoja 1"; // ← cambia al nombre real de tu pestaña principal
 var CUTOFF = new Date("2026-10-15T19:00:00-05:00");
-var RESERVA_MS = 3 * 60 * 60 * 1000;
+var RESERVA_MS = 12 * 60 * 60 * 1000;
 var PRECIO = 20000;
 var NOTIFY_EMAIL = "mendiar88@gmail.com";
 
