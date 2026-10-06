@@ -420,9 +420,8 @@ function Index() {
             el pago no se verifica en ese plazo, el número vuelve a estar disponible.
           </li>
           <li>
-            Cierre definitivo: {CONFIG.FINAL_CUTOFF_LABEL} (America/Bogota), 48 horas antes del
-            sorteo. Después no se aceptan reservas ni pagos para participar; toda reserva impaga se
-            libera.
+            Cierre definitivo: {CONFIG.FINAL_CUTOFF_LABEL} (America/Bogota). Después no se aceptan
+            reservas ni pagos para participar; toda reserva impaga se libera.
           </li>
           <li>
             Solo el organizador puede marcar un número como pagado y verificado, tras comprobar la

@@ -17,14 +17,14 @@ describe("reglas de la tómbola", () => {
   });
 
   it("cierra y marca como no activada cuando no se alcanza el mínimo", () => {
-    const afterCutoff = new Date("2026-10-14T00:00:00-05:00");
+    const afterCutoff = new Date("2026-10-15T20:00:00-05:00");
     expect(isClosed(afterCutoff)).toBe(true);
     expect(raffleStatus(51, afterCutoff)).toBe("No activada");
     expect(raffleStatus(52, afterCutoff)).toBe("Cerrada");
   });
 
   it("limita la reserva al cierre definitivo", () => {
-    const beforeCutoff = new Date("2026-10-13T22:00:00-05:00");
+    const beforeCutoff = new Date("2026-10-15T18:00:00-05:00");
     expect(reservationExpiry(beforeCutoff).getTime()).toBe(new Date(CONFIG.FINAL_CUTOFF).getTime());
   });
 });
